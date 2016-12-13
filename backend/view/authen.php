@@ -16,6 +16,10 @@ class authen_view
   {
     echo "เกิดปัญหาโปรดลองใหม่ภายหลัง";
   }
+  public function login_fail()
+  {
+    echo "รหัสผ่านไม่ถูกต้อง";
+  }
 }
 
 

@@ -22,5 +22,15 @@ class authen_controller
       $this->view->error();
     }
   }
+  public function login(string $user, string  $password, string  $email)
+  {
+    $check = $this->authen->login($user,$password,$email);
+    if ($check != null && gettype($check) == 'array') {
+      header('location: main.php');
+    }else {
+      $this->view->login_fail();
+    }
+
+  }
 }
  ?>
