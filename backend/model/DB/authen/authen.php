@@ -1,6 +1,6 @@
 <?php
 
-include dirname(__DIR__).'..\..\config\DB.php';
+include dirname(__DIR__).'\..\..\config\DB.php';
 class authen
 {
     private $config;
@@ -46,13 +46,13 @@ class authen
                 return false;
             }
         } catch (PDOException $e) {
-          echo 'error : '.$e->getMessage();
+            echo 'error : '.$e->getMessage();
         }
     }
     public function login(string $user, string  $password, string  $email)
     {
         try {
-            $sql = $this->sql->prepare('SELECT * FROM user WHERE username= :username OR email= :email ;');
+            $sql = $this->sql->prepare('SELECT id FROM user WHERE username= :username OR email= :email ;');
             $sql->bindParam(':username', $user, PDO::PARAM_STR, 64);
             $sql->bindParam(':email', $email, PDO::PARAM_STR, 64);
             $sql->execute();
@@ -75,7 +75,7 @@ class authen
     public function check_session(string $id_user)
     {
         if ($id_user != null) {
-            $sql = $this->sql->prepare('SELECT * FROM user WHERE id = :id_user ; ');
+            $sql = $this->sql->prepare('SELECT id FROM user WHERE id = :id_user ; ');
             $sql->bindParam(':id_user', $id_user, PDO::PARAM_INT, 11);
             $sql->execute();
             $fetch = $sql->fetch(PDO::FETCH_ASSOC);
@@ -89,3 +89,4 @@ class authen
         }
     }
 }
+?>

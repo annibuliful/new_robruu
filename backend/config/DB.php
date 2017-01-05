@@ -1,5 +1,4 @@
 <?php
-
 class DB_config
 {
   protected $dsn = 'mysql:dbname=robruu_online;host=127.0.0.1';
