@@ -25,13 +25,12 @@ class authen
                     return 'have_user';
                 } else {
                     $sql = $this->sql->prepare('INSERT INTO user(username,name,surname,
-                                          password,image,email,score,money,rating,flag,payment_number)
+                                          password,image,email,score,money,rating,payment_number)
                                           VALUES (:user ,:name ,:surname ,:password ,:image ,:email ,
-                                          0,100,0, :flag ,:payment_number );');
+                                          0,100,0,:payment_number );');
                     $sql->bindParam(':user', $user, PDO::PARAM_STR);
                     $sql->bindParam(':password', $hash_pass, PDO::PARAM_STR);
                     $sql->bindParam(':email', $email, PDO::PARAM_STR);
-                    $sql->bindParam(':flag', $flag, PDO::PARAM_STR);
                     $sql->bindParam(':name', $name, PDO::PARAM_STR);
                     $sql->bindParam(':surname', $surname, PDO::PARAM_STR);
                     $sql->bindParam(':image', $image['name'], PDO::PARAM_STR);
