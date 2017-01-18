@@ -26,7 +26,7 @@ class buildquery extends DB_config
       $condition = array();
       if ($columns == null) {
           if ($where == null) {
-              $sql .= "* FROM {$table};";
+              $sql .= "* FROM {$table}";
           } else {
               $where_size = (int) count($where);
               $where_num = (int) count($where) - 1;
@@ -35,7 +35,7 @@ class buildquery extends DB_config
                   if ($i < $where_num) {
                       $sql .= "{$where[$i][0]} {$where[$i][1]} :{$i},"; //$where[$i][2]
                   } else {
-                      $sql .= "{$where[$i][0]} {$where[$i][1]} :{$i};";
+                      $sql .= "{$where[$i][0]} {$where[$i][1]} :{$i} ";
                   }
               }
           }
@@ -50,9 +50,8 @@ class buildquery extends DB_config
                       $sql .= "{$columns[$i]} ";
                   }
               }
-              $sql .= "FROM {$table};";
+              $sql .= "FROM {$table}";
           } else {
-
               $columns_size = (int) count($columns);
               $columns_size = (int) count($columns) - 1;
               $where_size = (int) count($where);
@@ -69,15 +68,37 @@ class buildquery extends DB_config
                   if ($i < $where_num) {
                       $sql .= "{$where[$i][0]} {$where[$i][1]} :{$i},";
                   } else {
-                      $sql .= "{$where[$i][0]} {$where[$i][1]} :{$i};";
+                      $sql .= "{$where[$i][0]} {$where[$i][1]} :{$i} ";
                   }
               }
-              for ($i=0; $i <$where_size ; $i++) {
-                array_push($condition,$where[$i][2]);
+              for ($i = 0; $i < $where_size; ++$i) {
+                  array_push($condition, $where[$i][2]);
               }
           }
       }
-      return [$sql,$condition];
+
+      return [$sql, $condition];
+  }
+
+  /*
+  * ฟังก์ชั่นเรียงค่าจะลำดับ
+  * @param string $sql คือ sql จาก select function
+  * @param array $columns คือ columns ที่ต้องการและค่ากำหนด ASC หรือ DESC
+  * @return string $sql คือ sql command
+  */
+  public function order_by(string $sql, array $columns)
+  {
+      $columns_size = (int) count($columns);
+      $columns_num = (int) count($columns) - 1;
+      for ($i = 0; $i < $columns_size; ++$i) {
+          if ($i == 0) {
+              $sql .= "ORDER BY {$columns[$i][0]} {$columns[$i][1]},";
+          } else {
+              $sql .= "{$columns[$i][0]} {$columns[$i][1]};";
+          }
+      }
+
+      return (string) $sql;
   }
 
   /*
@@ -137,20 +158,20 @@ class buildquery extends DB_config
           $pdo->execute();
       }
   }
-  public function exec(array $return)
-  {
-    $data = array();
-    $values_size = count($return[1]);
-    $pdo = $this->pdo->prepare($return[0]);
-    for ($i=0; $i <$values_size ; $i++) {
-      $param = ':'.$i;
-      $pdo->bindParam($param,$return[1][$i]);
-    }
-    $pdo->execute();
-    while ($fetch = $pdo->fetch(PDO::FETCH_ASSOC)) {
-      array_push($data,$fetch);
-    }
-    return json_encode($data);
+    public function exec(array $return)
+    {
+        $data = array();
+        $values_size = count($return[1]);
+        $pdo = $this->pdo->prepare($return[0]);
+        for ($i = 0; $i < $values_size; ++$i) {
+            $param = ':'.$i;
+            $pdo->bindParam($param, $return[1][$i]);
+        }
+        $pdo->execute();
+        while ($fetch = $pdo->fetch(PDO::FETCH_ASSOC)) {
+            array_push($data, $fetch);
+        }
 
-  }
+        return json_encode($data);
+    }
 }
