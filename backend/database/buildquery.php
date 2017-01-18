@@ -85,6 +85,7 @@ class buildquery extends DB_config
   * @param string $sql คือ sql จาก select function
   * @param array $columns คือ columns ที่ต้องการและค่ากำหนด ASC หรือ DESC
   * @return string $sql คือ sql command
+  * @assert order_by('SELECT * FROM test',array(array('test2','ASC'),array('test3','DESC')));
   */
   public function order_by(string $sql, array $columns)
   {
@@ -92,7 +93,7 @@ class buildquery extends DB_config
       $columns_num = (int) count($columns) - 1;
       for ($i = 0; $i < $columns_size; ++$i) {
           if ($i == 0) {
-              $sql .= "ORDER BY {$columns[$i][0]} {$columns[$i][1]},";
+              $sql .= " ORDER BY {$columns[$i][0]} {$columns[$i][1]},";
           } else {
               $sql .= "{$columns[$i][0]} {$columns[$i][1]};";
           }
@@ -158,6 +159,10 @@ class buildquery extends DB_config
           $pdo->execute();
       }
   }
+  /*
+  * ฟังก์ชั่นสำหรับ execute SQL command
+  * @param array $return คือ SQL command ที่สร้างสำเร็จ
+  * @return json $data คือ fetch data แล้ว encode เป็น json*/
     public function exec(array $return)
     {
         $data = array();
