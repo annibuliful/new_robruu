@@ -15,7 +15,7 @@ class buildquery extends DB_config
   * @param string table คือ table ที่ต้องการ data จาก DB
   * @param array columns คือจำนวน column ที่ต้องการ
   * @param array where คือเงื่อนไขที่ต้องการ
-  * @return string $sql
+  * @return json data ที่ได้จาก DB
   * @assert select('test');
   * @assert select('test',array('test1','test2'));
   * @assert select('test',array('test1','test2'),array(array('test1','=','yyy')));
@@ -32,11 +32,18 @@ class buildquery extends DB_config
               $sql .= "* FROM {$table} WHERE ";
               for ($i = 0; $i < $where_size; ++$i) {
                   if ($i < $where_num) {
-                      $sql .= "{$where[$i][0]} {$where[$i][1]} {$where[$i][2]},";
+                      $sql .= "{$where[$i][0]} {$where[$i][1]} :{$i},"; //$where[$i][2]
                   } else {
-                      $sql .= "{$where[$i][0]} {$where[$i][1]} {$where[$i][2]};";
+                      $sql .= "{$where[$i][0]} {$where[$i][1]} :{$i};";
                   }
               }
+              $pdo = $this->pdo->prepare($sql);
+              for ($i=0; $i < $where_size ; $i++) {
+                $param = ':'.$i;
+                $pdo->bindParam($param,$where[$i][2]);
+              }
+              $pdo->execute();
+              return $pdo->fetchAll(PDO::FETCH_ASSOC);
           }
       } elseif ($columns != null) {
           if ($where == null) {
@@ -65,15 +72,26 @@ class buildquery extends DB_config
               $sql .= " FROM {$table} WHERE ";
               for ($i = 0; $i < $where_size; ++$i) {
                   if ($i < $where_num) {
-                      $sql .= "{$where[$i][0]} {$where[$i][1]} {$where[$i][2]},";
+                      $sql .= "{$where[$i][0]} {$where[$i][1]} :{$i},";
                   } else {
-                      $sql .= "{$where[$i][0]} {$where[$i][1]} {$where[$i][2]};";
+                      $sql .= "{$where[$i][0]} {$where[$i][1]} :{$i};";
                   }
               }
+              $pdo = $this->pdo->prepare($sql);
+              for ($i=0; $i < $where_size ; $i++) {
+                $param = ':'.$i;
+                $pdo->bindParam($param,$where[$i][2]);
+              }
+              $pdo->execute();
+              $data = array();
+              while ($fetch = $pdo->fetch(PDO::FETCH_ASSOC)) {
+                array_push($data,$fetch);
+              }
+              return json_encode($data);
           }
       }
 
-      return (string) $sql;
+
   }
 
   /*
