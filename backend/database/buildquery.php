@@ -11,74 +11,6 @@ class buildquery extends DB_config
     }
 
   /*
-  * ฟังก์ชั่นสำหรับการ select
-  * @param string table คือ table ที่ต้องการ data จาก DB
-  * @param array columns คือจำนวน column ที่ต้องการ
-  * @param array where คือเงื่อนไขที่ต้องการ
-  * @return json data ที่ได้จาก DB
-  * @assert select('test');
-  * @assert select('test',array('test1','test2'));
-  */
-  public function select(string $table, array $columns = null)
-  {
-      $sql = 'SELECT ';
-      if ($columns == null) {
-         $sql .= "* FROM {$table}";
-      }elseif ($columns != null) {
-        $columns_size = (int)count($columns);
-        $columns_num = (int)count($columns) - 1;
-        for ($i=0; $i < $columns_size ; $i++) {
-          if ($i < $columns_num) {
-            $sql .= "{$columns[$i]},";
-          }else {
-            $sql .= "{$columns[$i]} FROM {$table} ";
-          }
-        }
-      }
-      return (string)$sql;
-  }
-
-  /*
-  * ฟังก์ชั่นสำหรับสร้างเงื่อนไข
-  * @param string $sql คำสั่ง SQL
-  * @param array $where เงื่อนไขที่ต้องการ*/
-  public function where(string $sql,array $where)
-  {
-    $where_size = (int)count($where);
-    $where_num = (int)count($where) - 1;
-    for ($i=0; $i < $where_size ; $i++) {
-      if ($i < $where_num) {
-        $sql .= "WHERE {$where[$i][0]} {$where[$i][1]} {$where[$i][2]},";
-      }else {
-        $sql .= "{$where[$i][0]} {$where[$i][1]} {$where[$i][2]}";
-      }
-    }
-    return (string)$sql;
-  }
-
-  /*
-  * ฟังก์ชั่นเรียงค่าจะลำดับ
-  * @param string $sql คือ sql จาก select function
-  * @param array $columns คือ columns ที่ต้องการและค่ากำหนด ASC หรือ DESC
-  * @return string $sql คือ sql command
-  * @assert order_by('SELECT * FROM test',array(array('test2','ASC'),array('test3','DESC')));
-  */
-  public function order_by(string $sql, array $columns)
-  {
-      $columns_size = (int) count($columns);
-      $columns_num = (int) count($columns) - 1;
-      for ($i = 0; $i < $columns_size; ++$i) {
-          if ($i < $columns_num) {
-              $sql .= " ORDER BY {$columns[$i][0]} {$columns[$i][1]},";
-          } else {
-              $sql .= "{$columns[$i][0]} {$columns[$i][1]};";
-          }
-      }
-
-      return (string) $sql;
-  }
-
-  /*
   * ฟังก์ชั่นในการเพิ่มข้อมูลเข้า DB
   * @param string $table คือ table ที่เราต้องการจะเพิ่มข้อมูล
   * @param array $columns คือ columns ที่ต้องการจะเพิ่มข้อมูล
@@ -135,25 +67,4 @@ class buildquery extends DB_config
           $pdo->execute();
       }
   }
-  /*
-  * ฟังก์ชั่นสำหรับ execute SQL command
-  * @param array $return คือ SQL command ที่สร้างสำเร็จ
-  * @return json $data คือ fetch data แล้ว encode เป็น json
-  */
-    public function exec(array $return)
-    {
-        $data = array();
-        $values_size = count($return[1]);
-        $pdo = $this->pdo->prepare($return[0]);
-        for ($i = 0; $i < $values_size; ++$i) {
-            $param = ':'.$i;
-            $pdo->bindParam($param, $return[1][$i]);
-        }
-        $pdo->execute();
-        while ($fetch = $pdo->fetch(PDO::FETCH_ASSOC)) {
-            array_push($data, $fetch);
-        }
-
-        return json_encode($data);
-    }
 }
