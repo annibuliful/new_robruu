@@ -11,73 +11,49 @@ class buildquery extends DB_config
     }
 
   /*
-  * ฟังก์ชั่น select แล้ว fetch data จาก DB
+  * ฟังก์ชั่นสำหรับการ select
   * @param string table คือ table ที่ต้องการ data จาก DB
   * @param array columns คือจำนวน column ที่ต้องการ
   * @param array where คือเงื่อนไขที่ต้องการ
   * @return json data ที่ได้จาก DB
   * @assert select('test');
   * @assert select('test',array('test1','test2'));
-  * @assert select('test',array('test1','test2'),array(array('test1','=','yyy')));
   */
-  public function select(string $table, array $columns = null, array $where = null)
+  public function select(string $table, array $columns = null)
   {
       $sql = 'SELECT ';
-      $condition = array();
       if ($columns == null) {
-          if ($where == null) {
-              $sql .= "* FROM {$table}";
-          } else {
-              $where_size = (int) count($where);
-              $where_num = (int) count($where) - 1;
-              $sql .= "* FROM {$table} WHERE ";
-              for ($i = 0; $i < $where_size; ++$i) {
-                  if ($i < $where_num) {
-                      $sql .= "{$where[$i][0]} {$where[$i][1]} :{$i},"; //$where[$i][2]
-                  } else {
-                      $sql .= "{$where[$i][0]} {$where[$i][1]} :{$i} ";
-                  }
-              }
+         $sql .= "* FROM {$table}";
+      }elseif ($columns != null) {
+        $columns_size = (int)count($columns);
+        $columns_num = (int)count($columns) - 1;
+        for ($i=0; $i < $columns_size ; $i++) {
+          if ($i < $columns_num) {
+            $sql .= "{$columns[$i]},";
+          }else {
+            $sql .= "{$columns[$i]} FROM {$table} ";
           }
-      } elseif ($columns != null) {
-          if ($where == null) {
-              $columns_size = (int) count($columns);
-              $columns_num = (int) count($columns) - 1;
-              for ($i = 0; $i < $columns_size; ++$i) {
-                  if ($i < $columns_num) {
-                      $sql .= "{$columns[$i]},";
-                  } elseif ($i == $columns_num) {
-                      $sql .= "{$columns[$i]} ";
-                  }
-              }
-              $sql .= "FROM {$table}";
-          } else {
-              $columns_size = (int) count($columns);
-              $columns_size = (int) count($columns) - 1;
-              $where_size = (int) count($where);
-              $where_num = (int) count($where) - 1;
-              for ($i = 0; $i <= $columns_size; ++$i) {
-                  if ($i <= $columns_num) {
-                      $sql .= "{$columns[$i]},";
-                  } else {
-                      $sql .= "{$columns[$i]} ";
-                  }
-              }
-              $sql .= " FROM {$table} WHERE ";
-              for ($i = 0; $i < $where_size; ++$i) {
-                  if ($i < $where_num) {
-                      $sql .= "{$where[$i][0]} {$where[$i][1]} :{$i},";
-                  } else {
-                      $sql .= "{$where[$i][0]} {$where[$i][1]} :{$i} ";
-                  }
-              }
-              for ($i = 0; $i < $where_size; ++$i) {
-                  array_push($condition, $where[$i][2]);
-              }
-          }
+        }
       }
+      return (string)$sql;
+  }
 
-      return [$sql, $condition];
+  /*
+  * ฟังก์ชั่นสำหรับสร้างเงื่อนไข
+  * @param string $sql คำสั่ง SQL
+  * @param array $where เงื่อนไขที่ต้องการ*/
+  public function where(string $sql,array $where)
+  {
+    $where_size = (int)count($where);
+    $where_num = (int)count($where) - 1;
+    for ($i=0; $i < $where_size ; $i++) {
+      if ($i < $where_num) {
+        $sql .= "WHERE {$where[$i][0]} {$where[$i][1]} {$where[$i][2]},";
+      }else {
+        $sql .= "{$where[$i][0]} {$where[$i][1]} {$where[$i][2]}";
+      }
+    }
+    return (string)$sql;
   }
 
   /*
@@ -92,7 +68,7 @@ class buildquery extends DB_config
       $columns_size = (int) count($columns);
       $columns_num = (int) count($columns) - 1;
       for ($i = 0; $i < $columns_size; ++$i) {
-          if ($i == 0) {
+          if ($i < $columns_num) {
               $sql .= " ORDER BY {$columns[$i][0]} {$columns[$i][1]},";
           } else {
               $sql .= "{$columns[$i][0]} {$columns[$i][1]};";
@@ -162,7 +138,8 @@ class buildquery extends DB_config
   /*
   * ฟังก์ชั่นสำหรับ execute SQL command
   * @param array $return คือ SQL command ที่สร้างสำเร็จ
-  * @return json $data คือ fetch data แล้ว encode เป็น json*/
+  * @return json $data คือ fetch data แล้ว encode เป็น json
+  */
     public function exec(array $return)
     {
         $data = array();
