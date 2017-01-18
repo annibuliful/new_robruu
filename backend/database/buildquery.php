@@ -23,6 +23,7 @@ class buildquery extends DB_config
   public function select(string $table, array $columns = null, array $where = null)
   {
       $sql = 'SELECT ';
+      $condition = array();
       if ($columns == null) {
           if ($where == null) {
               $sql .= "* FROM {$table};";
@@ -37,13 +38,6 @@ class buildquery extends DB_config
                       $sql .= "{$where[$i][0]} {$where[$i][1]} :{$i};";
                   }
               }
-              $pdo = $this->pdo->prepare($sql);
-              for ($i=0; $i < $where_size ; $i++) {
-                $param = ':'.$i;
-                $pdo->bindParam($param,$where[$i][2]);
-              }
-              $pdo->execute();
-              return $pdo->fetchAll(PDO::FETCH_ASSOC);
           }
       } elseif ($columns != null) {
           if ($where == null) {
@@ -58,14 +52,15 @@ class buildquery extends DB_config
               }
               $sql .= "FROM {$table};";
           } else {
+
               $columns_size = (int) count($columns);
               $columns_size = (int) count($columns) - 1;
               $where_size = (int) count($where);
               $where_num = (int) count($where) - 1;
-              for ($i = 0; $i < $columns_size; ++$i) {
-                  if ($i < $columns_num) {
+              for ($i = 0; $i <= $columns_size; ++$i) {
+                  if ($i <= $columns_num) {
                       $sql .= "{$columns[$i]},";
-                  } elseif ($i == $columns_num) {
+                  } else {
                       $sql .= "{$columns[$i]} ";
                   }
               }
@@ -77,21 +72,12 @@ class buildquery extends DB_config
                       $sql .= "{$where[$i][0]} {$where[$i][1]} :{$i};";
                   }
               }
-              $pdo = $this->pdo->prepare($sql);
-              for ($i=0; $i < $where_size ; $i++) {
-                $param = ':'.$i;
-                $pdo->bindParam($param,$where[$i][2]);
+              for ($i=0; $i <$where_size ; $i++) {
+                array_push($condition,$where[$i][2]);
               }
-              $pdo->execute();
-              $data = array();
-              while ($fetch = $pdo->fetch(PDO::FETCH_ASSOC)) {
-                array_push($data,$fetch);
-              }
-              return json_encode($data);
           }
       }
-
-
+      return [$sql,$condition];
   }
 
   /*
@@ -136,8 +122,8 @@ class buildquery extends DB_config
           }
           $values_size = (int) count($columns);
           $values_num = (int) count($columns) - 1;
-          for ($i = 0; $i < $columns_size; ++$i) {
-              if ($i < $columns_num) {
+          for ($i = 0; $i < $values_size; ++$i) {
+              if ($i < $values_size_num) {
                   $sql .= ":{$i},";
               } elseif ($i == $values_num) {
                   $sql .= ":{$i});";
@@ -150,5 +136,21 @@ class buildquery extends DB_config
           }
           $pdo->execute();
       }
+  }
+  public function exec(array $return)
+  {
+    $data = array();
+    $values_size = count($return[1]);
+    $pdo = $this->pdo->prepare($return[0]);
+    for ($i=0; $i <$values_size ; $i++) {
+      $param = ':'.$i;
+      $pdo->bindParam($param,$return[1][$i]);
+    }
+    $pdo->execute();
+    while ($fetch = $pdo->fetch(PDO::FETCH_ASSOC)) {
+      array_push($data,$fetch);
+    }
+    return json_encode($data);
+
   }
 }

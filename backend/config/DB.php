@@ -3,7 +3,7 @@
 declare(strict_types=1);
 class DB_config
 {
-    protected $dsn = 'mysql:dbname=robruu_online;host=127.0.0.1';
+    protected $dsn = 'mysql:dbname=test;host=127.0.0.1';
     protected $user = 'root';
     protected $password = '@PeNtesterMYSQL';
 
