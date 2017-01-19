@@ -21,14 +21,14 @@ class SelectQuery
 
     public function __construct()
     {
-        //$this->array_tool = new array_tool();
+        $this->array_tool = new array_tool();
     }
 
   /*
   * ฟังก์ชั่นข้อมูล
   * @param string $table ชื่อ table ที่ต้องการ
   * @param array $columns ชื่อ columns ที่ต้องการ
-  * @return string $sql
+  * @return string $sql ใช้สำหรับ test แต่ตอน deploy ต้องเอาออก
   */
   public function select(string $table, array $columns = null)
   {
@@ -76,7 +76,7 @@ class SelectQuery
           $this->where = $sql;
           $this->param = array_merge($this->param, $param);
 
-          return true;
+          return $sql;
       } elseif ($condition_size != $param_size) {
           return false;
       }
