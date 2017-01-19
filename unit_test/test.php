@@ -3,19 +3,18 @@ use PHPUnit\Framework\TestCase;
 class DataTest extends TestCase
 {
  /**
- * @dataProvider additionProvider
+ * @dataProvider select
  */
- public function testAdd($a, $b, $expected)
+ public function testselect($table, $columns, $result)
  {
- $this->assertEquals($expected, $a + $b);
+   $sql = new SelectQuery();
+ $this->assertEquals($result, $sql->select($table,$columns));
  }
- public function additionProvider()
+ public function select()
  {
  return [
- [0, 0, 0],
- [0, 1, 1],
- [1, 0, 1],
- [1, 1, 2]
+ ['test',array(),'SELECT * FROM test'],
+ ['test', array('test1','test2'),'SELECT test1,test2 FROM test']
  ];
  }
 }

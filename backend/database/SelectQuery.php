@@ -49,6 +49,7 @@ class SelectQuery
       }
 
       $this->select = $sql;
+      return $sql;
   }
 
   /*

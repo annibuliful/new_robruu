@@ -1,3 +1,4 @@
 language: php
 php:
   - '7.0'
+script: phpunit --bootstrap backend/database/SelectQuery.php unit_test/test.php
