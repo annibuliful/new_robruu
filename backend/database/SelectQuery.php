@@ -1,7 +1,7 @@
 <?php
 
 declare(strict_types=1);
-require dirname(__DIR__).'\util\array\array.php';
+//require dirname(__DIR__).'\util\array\array.php';
 class SelectQuery
 {
     // @var $array_tool เป็น instance สำหรับ class array_tool
@@ -21,7 +21,7 @@ class SelectQuery
 
     public function __construct()
     {
-        $this->array_tool = new array_tool();
+        //$this->array_tool = new array_tool();
     }
 
   /*
