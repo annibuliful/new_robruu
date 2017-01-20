@@ -65,21 +65,20 @@ class SelectQuery
   */
   public function where(array $condition, array $param)
   {
-      $sql .= 'WHERE ';
+      $sql = 'WHERE ';
       $condition_size = (int) count($condition);
       $condition_num = (int) count($condition) - 1;
-      $param_size = (int) count($param);
-          for ($i = 0; $i < $condition_size; ++$i) {
-              if ($i < $condition_num) {
-                  $sql .= "{$condition[$i]} ? ,";
-              } else {
-                  $sql .= "{$condition[$i]} ? ";
-              }
+      for ($i = 0; $i < $condition_size; ++$i) {
+          if ($i < $condition_num) {
+              $sql .= "{$condition[$i]} ? ,";
+          } else {
+              $sql .= "{$condition[$i]} ? ";
           }
-          $this->where = $sql;
-          $this->param = array_merge($this->param, $param);
-
-          return $sql;
+      }
+      echo "$sql";
+      $this->where = $sql;
+      $this->param = array_merge($this->param,$param);
+      return $sql;
   }
   /*
   * ฟังก์ชั่นการเรียงจากน้อยไปมากหรือมากไปน้อย
@@ -92,13 +91,14 @@ class SelectQuery
       $columns_size = (int) count($columns);
       $columns_num = (int) count($columns) - 1;
       for ($i = 0; $i < $columns_size; ++$i) {
-        if ($i < $columns_num) {
-          $sql .= "{$columns[$i]} {$poperties[$i]},";
-        }else {
-          $sql .= "{$columns[$i]} {$poperties[$i]}";
-        }
+          if ($i < $columns_num) {
+              $sql .= "{$columns[$i]} {$poperties[$i]},";
+          } else {
+              $sql .= "{$columns[$i]} {$poperties[$i]}";
+          }
       }
       $this->orderby = $sql;
+
       return $sql;
   }
 
@@ -138,3 +138,5 @@ class SelectQuery
       return (string) $this->sql;
   }
 }
+$s = new SelectQuery();
+$s->where(array('test1 =','test2 >','test3 >','test4 <'),array('x','y'));
