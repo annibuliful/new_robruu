@@ -68,6 +68,8 @@ class SelectQuery
       $sql .= 'WHERE ';
       $condition_size = (int) count($condition);
       $condition_num = (int) count($condition) - 1;
+      $param_size = (int) count($param);
+      if ($condition_size == $param_size) {
           for ($i = 0; $i < $condition_size; ++$i) {
               if ($i < $condition_num) {
                   $sql .= "{$condition[$i]} ? ,";
@@ -79,6 +81,9 @@ class SelectQuery
           $this->param = array_merge($this->param, $param);
 
           return $sql;
+      } elseif ($condition_size != $param_size) {
+          return 'false';
+      }
   }
   /*
   * ฟังก์ชั่นการเรียงจากน้อยไปมากหรือมากไปน้อย

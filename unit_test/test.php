@@ -31,7 +31,9 @@ class DataTest extends TestCase
  public function where()
  {
    return  [
-   [array('test1 = ','test2 >','test3 >','test4 <'),array(),'WHERE test1 = ? ,test2 > ? ,test3 > ? ,test4 < ? ']];
+   [array('test1 = ','test2 >'),array(),'WHERE test1 = ? ,test2 > ?'],
+   [array('test1 = ','test2 >','test3 >','test4 <'),array(),'WHERE test1 = ? ,test2 > ? ,test3 > ? ,test4 < ? '],
+   [array('test2 =','test3 <'),array('test'),'false']];
  }
 }
 ?>
