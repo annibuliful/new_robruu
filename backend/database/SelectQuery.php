@@ -75,7 +75,6 @@ class SelectQuery
               $sql .= "{$condition[$i]} ? ";
           }
       }
-      echo "$sql";
       $this->where = $sql;
       $this->param = array_merge($this->param,$param);
       return $sql;
@@ -139,4 +138,4 @@ class SelectQuery
   }
 }
 $s = new SelectQuery();
-$s->where(array('test1 =','test2 >','test3 >','test4 <'),array('x','y'));
+echo $s->where(array('test1 =','test2 >','test3 >','test4 <'),array('x','y'));
