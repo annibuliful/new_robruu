@@ -69,7 +69,6 @@ class SelectQuery
       $condition_size = (int) count($condition);
       $condition_num = (int) count($condition) - 1;
       $param_size = (int) count($param);
-      if ($condition_size == $param_size) {
           for ($i = 0; $i < $condition_size; ++$i) {
               if ($i < $condition_num) {
                   $sql .= "{$condition[$i]} ? ,";
@@ -81,16 +80,13 @@ class SelectQuery
           $this->param = array_merge($this->param, $param);
 
           return $sql;
-      } elseif ($condition_size != $param_size) {
-          return 'false';
-      }
   }
   /*
   * ฟังก์ชั่นการเรียงจากน้อยไปมากหรือมากไปน้อย
   * @param array $columns ชื่อ columns ที่ต้องการ
   * @param array $poperties คือ poperties ที่ต้องการ [ASC,DESC]
   */
-  public function orderby(array $columns, array $poperties = null)
+  public function orderby(array $columns, array $poperties)
   {
       $sql = 'ORDER BY';
       $columns_size = (int) count($columns);
