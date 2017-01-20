@@ -103,7 +103,7 @@ class SelectQuery
         }
       }
       $this->orderby = $sql;
-      $this->param = array_merge($this->param, $param);
+      return $sql;
   }
 
   /*
