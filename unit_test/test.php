@@ -2,6 +2,7 @@
 use PHPUnit\Framework\TestCase;
 class DataTest extends TestCase
 {
+
  /**
  * @dataProvider select
  */
@@ -10,6 +11,10 @@ class DataTest extends TestCase
    $sql = new SelectQuery();
  $this->assertEquals($result, $sql->select($table,$columns));
  }
+
+ /**
+ * @dataProvider where
+ */
  public function testwhere($Condition,$param,$result)
  {
    $sql = new SelectQuery();
@@ -26,7 +31,6 @@ class DataTest extends TestCase
  public function where()
  {
    return  [
-   [array('test1 = ','test2 >'),array(),'WHERE test1 = ? ,test2 > ?'],
    [array('test1 = ','test2 >','test3 >','test4 <'),array(),'WHERE test1 = ? ,test2 > ? ,test3 > ? ,test < ? '],
    [array('test2 =','test3 <'),array('test'),false]];
  }
