@@ -13,6 +13,9 @@ class SelectQuery
   // @var $where เก็บค่า Condition จาก where()
   private $where;
 
+  // @var $orderby เก็บค่าการเรียงจากน้อยไปมากหรือมากไปน้อย จาก orderby()
+  private $orderby;
+
   // @var $param เก็บค่าสำหรับ bind parameter
   private $param = array();
 
@@ -49,6 +52,7 @@ class SelectQuery
       }
 
       $this->select = $sql;
+
       return $sql;
   }
 
@@ -64,8 +68,6 @@ class SelectQuery
       $sql .= 'WHERE ';
       $condition_size = (int) count($condition);
       $condition_num = (int) count($condition) - 1;
-      $param_size = (int) count($param);
-      if ($condition_size == $param_size) {
           for ($i = 0; $i < $condition_size; ++$i) {
               if ($i < $condition_num) {
                   $sql .= "{$condition[$i]} ? ,";
@@ -77,9 +79,26 @@ class SelectQuery
           $this->param = array_merge($this->param, $param);
 
           return $sql;
-      } elseif ($condition_size != $param_size) {
-          return false;
+  }
+  /*
+  * ฟังก์ชั่นการเรียงจากน้อยไปมากหรือมากไปน้อย
+  * @param array $columns ชื่อ columns ที่ต้องการ
+  * @param array $poperties คือ poperties ที่ต้องการ [ASC,DESC]
+  */
+  public function orderby(array $columns, array $poperties)
+  {
+      $sql = 'ORDER BY';
+      $columns_size = (int) count($columns);
+      $columns_num = (int) count($columns) - 1;
+      for ($i = 0; $i < $columns_size; ++$i) {
+        if ($i < $columns_num) {
+          $sql .= "{$columns[$i]} {$poperties[$i]},";
+        }else {
+          $sql .= "{$columns[$i]} {$poperties[$i]}";
+        }
       }
+      $this->orderby = $sql;
+      $this->param = array_merge($this->param, $param);
   }
 
   /*
