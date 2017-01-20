@@ -90,7 +90,7 @@ class SelectQuery
   * @param array $columns ชื่อ columns ที่ต้องการ
   * @param array $poperties คือ poperties ที่ต้องการ [ASC,DESC]
   */
-  public function orderby(array $columns, array $poperties)
+  public function orderby(array $columns, array $poperties = null)
   {
       $sql = 'ORDER BY';
       $columns_size = (int) count($columns);
