@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 require dirname(__DIR__).'\config\DB.php';
 class SelectQuery extends DB_config
@@ -24,12 +25,12 @@ class SelectQuery extends DB_config
   private $sql;
 
   // @var $data เก็บค่า fetch จาก SQL command
-  public  $fetch = array();
+  public $fetch = array();
 
     public function __construct()
     {
-      $this->pdo = new PDO($this->dsn, $this->user, $this->password);
-      $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $this->pdo = new PDO($this->dsn, $this->user, $this->password);
+        $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
 
   /*
@@ -75,25 +76,27 @@ class SelectQuery extends DB_config
   * */
   public function param(array $param)
   {
-    $this->param = array_merge($this->param,$param);
-    return $this;
-  }
-  public function where(array $condition = null)
-  {
-      $sql = 'WHERE ';
-      $condition_size = (int) count($condition);
-      $condition_num = (int) count($condition) - 1;
-      for ($i = 0; $i < $condition_size; ++$i) {
-          if ($i < $condition_num) {
-              $sql .= "{$condition[$i][0]} {$condition[$i][1]} ";
-          } else {
-              $sql .= "{$condition[$i][0]} {$condition[$i][1]} ";
-          }
-      }
-      $this->where = $sql;
-      $this->sql = $this->sql.$sql;
+      $this->param = array_merge($this->param, $param);
+
       return $this;
   }
+    public function where(array $condition = null)
+    {
+        $sql = 'WHERE ';
+        $condition_size = (int) count($condition);
+        $condition_num = (int) count($condition) - 1;
+        for ($i = 0; $i < $condition_size; ++$i) {
+            if ($i < $condition_num) {
+                $sql .= "{$condition[$i][0]} {$condition[$i][1]} ";
+            } else {
+                $sql .= "{$condition[$i][0]} {$condition[$i][1]} ";
+            }
+        }
+        $this->where = $sql;
+        $this->sql = $this->sql.$sql;
+
+        return $this;
+    }
   /*
   * ฟังก์ชั่นการเรียงจากน้อยไปมากหรือมากไปน้อย
   * @param array $columns ชื่อ columns ที่ต้องการ
@@ -113,6 +116,26 @@ class SelectQuery extends DB_config
       }
       $this->orderby = $sql;
       $this->sql = $this->sql.$sql;
+
+      return $this;
+  }
+
+  /*
+  * ฟังก์ชั่นสำหรับจำกัดจำนวน record
+  * @param int $num จำนวนที่ต้องการ
+  * @param int $begin เริ่มตรงไหน (เริ่มที่ 0)
+  * @param int $end จบตรงไหน
+  */
+  public function limit(int $num = null, int $begin = null, int $end = null)
+  {
+      $sql = 'LIMIT ';
+      if ($begin != null && $end != null) {
+          $sql .= "{$begin},{$end}";
+      } elseif ($begin == null && $end == null) {
+          $sql .= "{$num}";
+      }
+      $this->sql = $this->sql.$sql;
+
       return $this;
   }
 
@@ -132,6 +155,7 @@ class SelectQuery extends DB_config
       while ($fetch = $sql->fetch(PDO::FETCH_ASSOC)) {
           array_push($this->fetch, $fetch);
       }
+
       return $this;
   }
   /*
@@ -176,6 +200,6 @@ class SelectQuery extends DB_config
   */
   public function getFetch()
   {
-    return (array)$this->fetch;
+      return (array) $this->fetch;
   }
 }
