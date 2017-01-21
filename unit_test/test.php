@@ -25,12 +25,5 @@ class DataTest extends TestCase
  ['test',array('test1','test2','test3','test4'),'SELECT test1,test2,test3,test4 FROM test']
  ];
  }
- /*public function where()
- {
-   return  [
-   [array('test1 =','test2 ='),array('xx','yy'),"WHERE test1 = ? ,test2 = ?"],
-   [array('test1 =','test2 >','test3 >','test4 <'),array('x','y'),"WHERE test1 = ? ,test2 > ? ,test3 > ? ,test4 < ?"]
-           ];
- }*/
 }
 ?>
