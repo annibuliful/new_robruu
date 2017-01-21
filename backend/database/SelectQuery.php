@@ -1,10 +1,11 @@
 <?php
-
 declare(strict_types=1);
-require dirname(__DIR__).'/util/array/array.php';
-class SelectQuery
+require dirname(__DIR__).'\config\DB.php';
+class SelectQuery extends DB_config
 {
-    // @var $array_tool เป็น instance สำหรับ class array_tool
+    // @var $pdo เก็บค่า PDO
+  private $pdo;
+  // @var $array_tool เป็น instance สำหรับ class array_tool
   private $array_tool;
 
   // @var $select เก็บค่า SQL command จาก select()
@@ -17,14 +18,18 @@ class SelectQuery
   private $orderby;
 
   // @var $param เก็บค่าสำหรับ bind parameter
-  private $param = array();
+  private $param = array('');
 
   // @var $sql เก็บค่า SQL command ที่พร้อมจะ execute
   private $sql;
 
+  // @var $data เก็บค่า fetch จาก SQL command
+  public  $fetch = array();
+
     public function __construct()
     {
-        $this->array_tool = new array_tool();
+      $this->pdo = new PDO($this->dsn, $this->user, $this->password);
+      $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
 
   /*
@@ -46,12 +51,13 @@ class SelectQuery
                   $sql .= "{$columns[$i]} ";
               }
           }
-          $sql .= "FROM {$table}";
+          $sql .= "FROM {$table} ";
       } elseif ($columns == null) {
-          $sql .= "* FROM {$table}";
+          $sql .= "* FROM {$table} ";
       }
 
       $this->select = $sql;
+      $this->sql = $sql;
 
       return $sql;
   }
@@ -63,21 +69,30 @@ class SelectQuery
   * @param array $param คือตัวที่ใช้คู่กับ condition
   * @return boolean
   */
-  public function where(array $condition, array $param)
+
+  /*
+  * ฟังก์ชั่นสำหรับเก็บ parameter เพื่อเอาไปใช้ในการทำ bind parameter
+  * */
+  public function param(array $param)
+  {
+    $this->param = array_merge($this->param,$param);
+    return $this;
+  }
+  public function where(array $condition = null)
   {
       $sql = 'WHERE ';
       $condition_size = (int) count($condition);
       $condition_num = (int) count($condition) - 1;
       for ($i = 0; $i < $condition_size; ++$i) {
           if ($i < $condition_num) {
-              $sql .= "{$condition[$i]} ? ,";
+              $sql .= "{$condition[$i][0]} {$condition[$i][1]} ";
           } else {
-              $sql .= "{$condition[$i]} ? ";
+              $sql .= "{$condition[$i][0]} {$condition[$i][1]} ";
           }
       }
-      //$this->where = $sql;
-      //$this->param = array_merge($this->param,$param);
-      return $sql;
+      $this->where = $sql;
+      $this->sql = $this->sql.$sql;
+      return $this;
   }
   /*
   * ฟังก์ชั่นการเรียงจากน้อยไปมากหรือมากไปน้อย
@@ -86,7 +101,7 @@ class SelectQuery
   */
   public function orderby(array $columns, array $poperties)
   {
-      $sql = 'ORDER BY';
+      $sql = 'ORDER BY ';
       $columns_size = (int) count($columns);
       $columns_num = (int) count($columns) - 1;
       for ($i = 0; $i < $columns_size; ++$i) {
@@ -97,10 +112,28 @@ class SelectQuery
           }
       }
       $this->orderby = $sql;
-
-      return $sql;
+      $this->sql = $this->sql.$sql;
+      return $this;
   }
 
+  /*
+  * ฟังก์ชั่น execute SQL command แล้วคืนค่าจาก DB
+  * @return $this->sql
+  */
+  public function exec()
+  {
+      $sql = $this->pdo->prepare($this->sql);
+      $param = $this->param;
+      $param_size = (int) count($this->param);
+      for ($i = 1; $i < $param_size; ++$i) {
+          $sql->bindParam($i, $param[$i]);
+      }
+      $sql->execute();
+      while ($fetch = $sql->fetch(PDO::FETCH_ASSOC)) {
+          array_push($this->fetch, $fetch);
+      }
+      return $this;
+  }
   /*
   * ฟังก์ชั่นคืนค่าจาก select
   * @return $this->select
@@ -125,7 +158,7 @@ class SelectQuery
   */
   public function getParam()
   {
-      return (string) $this->param;
+      return (array) $this->param;
   }
 
   /*
@@ -136,6 +169,13 @@ class SelectQuery
   {
       return (string) $this->sql;
   }
+
+  /*
+  * ฟังก์ชั่นคืนค่าจากการ execute
+  * @return $this->fetch
+  */
+  public function getFetch()
+  {
+    return (array)$this->fetch;
+  }
 }
-$s = new SelectQuery();
-echo $s->where(array('test1 =','test2 >','test3 >','test4 <'),array('x','y'));
