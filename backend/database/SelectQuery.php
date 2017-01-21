@@ -75,8 +75,8 @@ class SelectQuery
               $sql .= "{$condition[$i]} ? ";
           }
       }
-      $this->where = $sql;
-      $this->param = array_merge($this->param,$param);
+      //$this->where = $sql;
+      //$this->param = array_merge($this->param,$param);
       return $sql;
   }
   /*
