@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
-require dirname(__DIR__).'\database\SelectQuery.php';
-require dirname(__DIR__).'\database\JoinQuery.php';
+require dirname(__DIR__).'/database/SelectQuery.php';
+require dirname(__DIR__).'/database/JoinQuery.php';
 class core_build
 {
   // @var $pdo เก็บค่า PDO

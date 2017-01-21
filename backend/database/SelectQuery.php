@@ -1,7 +1,7 @@
 <?php
 
 declare(strict_types=1);
-require dirname(__DIR__).'\config\DB.php';
+require dirname(__DIR__).'/config/DB.php';
 class SelectQuery extends DB_config
 {
     // @var $pdo เก็บค่า PDO
