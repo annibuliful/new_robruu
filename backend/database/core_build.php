@@ -24,15 +24,23 @@ class core_build
     $this->join = new JoinQuery();
   }
 
-  /*
+  /**
   * ฟังก์ชั่นสำหรับในการ select data แล้ว fetch
-  * @return $this
+  * @return $instance
   */
   public function select(string $table, array $columns = null)
   {
-    $select = new SelectQuery();
-    $select->select($table,$columns);
-    return $select;
+    $query = new SelectQuery();
+    $query->select($table,$columns);
+    return $query;
+  }
+  /**
+  * ฟังก์ชั่นในการทำ JOIN
+  * @return */
+  public function join(string $primarykey1,string $primarykey2)
+  {
+    $query = new JoinQuery($primarykey1,$primarykey2);
+    return $query;
   }
 }
  ?>
