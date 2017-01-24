@@ -1,6 +1,4 @@
 <?php
-
-declare(strict_types=1);
 class JoinQuery
 {
     // @var $pdo เป็น instance ของ PDO

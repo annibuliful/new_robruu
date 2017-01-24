@@ -1,6 +1,5 @@
 <?php
 
-declare(strict_types=1);
 class SelectQuery
 {
     // @var $pdo เก็บค่า PDO
