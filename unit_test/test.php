@@ -9,14 +9,9 @@ class DataTest extends TestCase
  public function testselect($table, $columns, $result)
  {
    $sql = new SelectQuery();
- $this->assertEquals($result, $sql->select($table,$columns));
+ $this->assertEquals($result, $sql->select($table,$columns)->getSql());
  }
 
- public function testwhere()
- {
-   $sql = new SelectQuery();
-   $this->assertEquals("WHERE test1 = ? ,test2 = ?",$sql->where(array('test1 =','test2 ='),array('xx','yy')));
- }
  public function select()
  {
  return [

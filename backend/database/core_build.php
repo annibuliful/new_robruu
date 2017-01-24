@@ -2,7 +2,8 @@
 declare(strict_types=1);
 require dirname(__DIR__).'/database/SelectQuery.php';
 require dirname(__DIR__).'/database/JoinQuery.php';
-class core_build
+require dirname(__DIR__).'/config/DB.php';
+class core_build extends DB_config
 {
   // @var $pdo เก็บค่า PDO
   public $pdo;
@@ -21,7 +22,7 @@ class core_build
 
   function __construct()
   {
-    $this->join = new JoinQuery();
+    $this->pdo = new PDO($this->dsn, $this->user, $this->password);
   }
 
   /**
@@ -30,7 +31,7 @@ class core_build
   */
   public function select(string $table, array $columns = null)
   {
-    $query = new SelectQuery();
+    $query = new SelectQuery($this->pdo);
     $query->select($table,$columns);
     return $query;
   }
@@ -43,4 +44,6 @@ class core_build
     return $query;
   }
 }
+$s = new core_build();
+echo $s->select('test',array('sss','ttt'))->getSql();
  ?>

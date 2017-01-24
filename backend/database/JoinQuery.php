@@ -1,8 +1,7 @@
 <?php
 
 declare(strict_types=1);
-require dirname(__DIR__).'/config/DB.php';
-class JoinQuery extends DB_config
+class JoinQuery
 {
     // @var $pdo เป็น instance ของ PDO
   private $pdo;
@@ -21,9 +20,9 @@ class JoinQuery extends DB_config
 
   /**
   * เก็บ table ที่จะเอาไว้ join ลง $tables*/
-    public function __construct(string $primarykey1,string $primarykey2)
+    public function __construct(string $primarykey1,string $primarykey2,PDO $pdo)
     {
-      $this->pdo = new PDO($this->dsn, $this->user, $this->password);
+      $this->pdo = $pdo;
       $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
       $primarykey = array($primarykey1,$primarykey2);
       $this->tables = array_merge($this->tables,$primarykey);
@@ -85,10 +84,10 @@ class JoinQuery extends DB_config
     * @param string $table2 คือ table ที่ 2
     * @return $this
     */
-    public function inner(string $primarykey1,string $primarykey2)
+    public function inner(string $condition)
     {
       $tables = $this->tables;
-      $sql = "FROM {$tables[0]} INNER JOIN {$tables[1]} ON {$primarykey1} = {$primarykey2} ";
+      $sql = "FROM {$tables[0]} INNER JOIN {$tables[1]} ON {$condition} ";
       $this->sql = $this->sql.$sql;
       return $this;
 

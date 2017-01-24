@@ -1,8 +1,7 @@
 <?php
 
 declare(strict_types=1);
-require dirname(__DIR__).'/config/DB.php';
-class SelectQuery extends DB_config
+class SelectQuery
 {
     // @var $pdo เก็บค่า PDO
   private $pdo;
@@ -25,9 +24,9 @@ class SelectQuery extends DB_config
   // @var $data เก็บค่า fetch จาก SQL command
   public $fetch = array();
 
-    public function __construct()
+    public function __construct(PDO $pdo)
     {
-        $this->pdo = new PDO($this->dsn, $this->user, $this->password);
+        $this->pdo = $pdo;
         $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
 
