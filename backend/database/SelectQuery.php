@@ -41,9 +41,8 @@ class SelectQuery
   {
       $sql = 'SELECT ';
       if ($columns != null) {
-          $columns_size = (int) count($columns);
           $columns_num = (int) count($columns) - 1;
-          for ($i = 0; $i < $columns_size; ++$i) {
+          for ($i = 0; $i <= $columns_num; ++$i) {
               if ($i < $columns_num) {
                   $sql .= "{$table}.{$columns[$i]},";
               } else {
@@ -87,9 +86,8 @@ class SelectQuery
     public function where(array $condition = null)
     {
         $sql = 'WHERE ';
-        $condition_size = (int) count($condition);
         $condition_num = (int) count($condition) - 1;
-        for ($i = 0; $i < $condition_size; ++$i) {
+        for ($i = 0; $i <= $condition_num; ++$i) {
             if ($i < $condition_num) {
                 $sql .= "{$condition[$i][0]} {$condition[$i][1]} ";
             } else {
@@ -113,9 +111,8 @@ class SelectQuery
   public function orderby(array $columns, array $poperties)
   {
       $sql = 'ORDER BY ';
-      $columns_size = (int) count($columns);
       $columns_num = (int) count($columns) - 1;
-      for ($i = 0; $i < $columns_size; ++$i) {
+      for ($i = 0; $i <= $columns_num; ++$i) {
           if ($i < $columns_num) {
               $sql .= "{$columns[$i]} {$poperties[$i]},";
           } else {
