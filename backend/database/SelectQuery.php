@@ -15,7 +15,7 @@ class SelectQuery
   private $orderby;
 
   // @var $param เก็บค่าสำหรับ bind parameter
-  private $param = array('');
+  private $param = array();
 
   // @var $sql เก็บค่า SQL command ที่พร้อมจะ execute
   private $sql;
@@ -58,8 +58,9 @@ class SelectQuery
       $this->select = $sql;
       $this->sql = $sql;
 
-      return $sql;
+      return $this;
   }
+
   /**
    * ฟังก์ชั่นสำหรับเก็บ parameter เพื่อเอาไปใช้ในการทำ bind parameter.
    *
@@ -159,7 +160,7 @@ class SelectQuery
       $sql = $this->pdo->prepare($this->sql);
       $param = $this->param;
       $param_size = (int) count($this->param);
-      for ($i = 1; $i < $param_size; ++$i) {
+      for ($i = 0; $i < $param_size; ++$i) {
           $sql->bindParam($i, $param[$i]);
       }
       $sql->execute();
