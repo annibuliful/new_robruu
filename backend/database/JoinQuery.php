@@ -17,32 +17,34 @@ class JoinQuery
   private $tables = array();
 
   /**
-  * เก็บ table ที่จะเอาไว้ join ลง $tables*/
-    public function __construct(PDO $pdo)
+  * เก็บ table ที่จะเอาไว้ join ลง $tables
+  * @param PDO $pdo สำหรับเก็บต่า instance ของ pdo
+  * @param array $tables เก็บ tables
+  */
+    public function __construct(PDO $pdo,array $tables)
     {
       $this->pdo = $pdo;
       $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+      $this->tables = array_merge($this->tables,$tables);
     }
 
     /**
      * ฟังก์ชั่นในการ select data
      *
-     * @param array $tables คือ tables และ columns [tables.columns]
+     * @param array $columns คือ tables และ columns [tables.columns]
      * @return $this
      */
-    public function select(array $tables)
+    public function select(array $columns)
     {
         $sql = 'SELECT ';
-        $tables_size = (int)count($tables);
-        $tables_num = (int)count($tables) - 1;
-        for ($i=0; $i < $tables_size ; $i++) {
-          if ($i < $tables_num) {
-            $sql .= "{$tables[$i]},";
+        $columns_num = (int)count($columns) - 1;
+        for ($i=0; $i <= $columns_num ; $i++) {
+          if ($i < $columns_num) {
+            $sql .= "{$columns[$i]},";
           }else {
-            $sql .= "{$tables[$i]} ";
+            $sql .= "{$columns[$i]} ";
           }
         }
-
         $this->sql = $sql;
 
         return $this;
@@ -159,5 +161,5 @@ class JoinQuery
     }
 }
 $pdo = new PDO('mysql:dbname=test;host=127.0.0.1','root','@PeNtesterMYSQL');
-$s = new JoinQuery('1','2',$pdo);
-$s->select('test')->getSql();
+$s = new JoinQuery($pdo,array('test1','test2'));
+echo $s->select(array('test1.test2','test2.test1','sss','wwwww','2222'))->inner('test1.test2 = test2.test1')->getSql();
