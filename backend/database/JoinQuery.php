@@ -160,6 +160,3 @@ class JoinQuery
         return (string) $this->sql;
     }
 }
-$pdo = new PDO('mysql:dbname=test;host=127.0.0.1','root','@PeNtesterMYSQL');
-$s = new JoinQuery($pdo,array('test1','test2'));
-echo $s->select(array('test1.test2','test2.test1','sss','wwwww','2222'))->inner('test1.test2 = test2.test1')->getSql();
