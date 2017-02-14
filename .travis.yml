@@ -1,4 +1,8 @@
 language: php
 php:
   - '7.0'
-script: phpunit --bootstrap backend/database/SelectQuery.php unit_test/test.php
+env:
+  - DB=mysql
+before_script:
+  - mysql -e "create database IF NOT EXISTS test;" -uroot
+script: phpunit --configuration unit_test/mysql.xml --bootstrap backend/database/SelectQuery.php unit_test/test.php
